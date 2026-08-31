@@ -29,10 +29,6 @@ depends=(
   'nss'
   'pango'
 )
-depends+=(
-  'desktop-file-utils'
-  'hicolor-icon-theme'
-)
 optdepends=('git: version control integration')
 conflicts=('antigravity')
 
@@ -52,8 +48,6 @@ sha256sums=(
 )
 
 prepare() {
-  desktop-file-validate antigravity-ide.desktop
-
   # The upstream archive has a directory name containing a space. Rename it
   # once so the installation phase stays readable and deterministic.
   mv 'Antigravity IDE' antigravity-ide

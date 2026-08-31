@@ -71,9 +71,7 @@ jobs:
                 libxtst \
                 mesa \
                 nss \
-                pango \
-                desktop-file-utils \
-                hicolor-icon-theme
+                pango
               useradd --create-home builder
               chown -R builder:builder /workspace
               runuser -u builder -- env \
