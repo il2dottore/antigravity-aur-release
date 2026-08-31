@@ -47,14 +47,40 @@ jobs:
             bash -euc '
               pacman-key --init
               pacman-key --populate archlinux
-              pacman -Syu --noconfirm --needed git
+              # Install package dependencies as root. makepkg runs as the
+              # unprivileged builder below, so --syncdeps would otherwise
+              # try to invoke sudo and wait for a password.
+              pacman -Syu --noconfirm --needed \
+                git \
+                alsa-lib \
+                at-spi2-core \
+                cairo \
+                dbus \
+                expat \
+                gcc-libs \
+                glib2 \
+                gtk3 \
+                libdrm \
+                libxcb \
+                libxcomposite \
+                libxdamage \
+                libxfixes \
+                libxkbcommon \
+                libxrandr \
+                libxss \
+                libxtst \
+                mesa \
+                nss \
+                pango \
+                desktop-file-utils \
+                hicolor-icon-theme
               useradd --create-home builder
               chown -R builder:builder /workspace
               runuser -u builder -- env \
                 "ANTIGRAVITY_IDE_URL=${ANTIGRAVITY_IDE_URL}" \
                 "ANTIGRAVITY_IDE_SHA256=${ANTIGRAVITY_IDE_SHA256}" \
                 "ANTIGRAVITY_IDE_VERSION=${ANTIGRAVITY_IDE_VERSION}" \
-                makepkg --syncdeps --clean --cleanbuild --noconfirm
+                makepkg --nodeps --clean --cleanbuild --noconfirm
             '
 
       - name: Upload package artifact
