@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Antigravity IDE
+Comment=Agent-first desktop IDE from Google
+Exec=antigravity-ide %F
+Icon=antigravity-ide
+Type=Application
+Categories=Development;IDE;
+MimeType=text/plain;inode/directory;
+StartupNotify=true
+Terminal=false
+Keywords=code;coding;development;editor;ide;programming;

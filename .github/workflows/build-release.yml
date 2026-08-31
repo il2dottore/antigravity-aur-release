@@ -1,0 +1,71 @@
+name: Build and release AUR package
+
+on:
+  workflow_dispatch:
+    inputs:
+      tarball_url:
+        description: 'User-provided Antigravity IDE tarball URL'
+        required: true
+        type: string
+      sha256:
+        description: 'Optional SHA-256 checksum for the tarball'
+        required: false
+        type: string
+      version:
+        description: 'Package version, for example 2.5.5'
+        required: true
+        type: string
+      release_tag:
+        description: 'Optional GitHub release tag, for example v2.5.5-1'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build x86_64 package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build with Arch Linux
+        env:
+          ANTIGRAVITY_IDE_URL: ${{ inputs.tarball_url }}
+          ANTIGRAVITY_IDE_SHA256: ${{ inputs.sha256 }}
+          ANTIGRAVITY_IDE_VERSION: ${{ inputs.version }}
+        run: |
+          docker run --rm \
+            -e ANTIGRAVITY_IDE_URL \
+            -e ANTIGRAVITY_IDE_SHA256 \
+            -e ANTIGRAVITY_IDE_VERSION \
+            -v "${GITHUB_WORKSPACE}:/workspace" \
+            -w /workspace \
+            archlinux:base-devel \
+            bash -euc '
+              pacman-key --init
+              pacman-key --populate archlinux
+              pacman -Syu --noconfirm --needed git
+              useradd --create-home builder
+              chown -R builder:builder /workspace
+              runuser -u builder -- env \
+                "ANTIGRAVITY_IDE_URL=${ANTIGRAVITY_IDE_URL}" \
+                "ANTIGRAVITY_IDE_SHA256=${ANTIGRAVITY_IDE_SHA256}" \
+                "ANTIGRAVITY_IDE_VERSION=${ANTIGRAVITY_IDE_VERSION}" \
+                makepkg --syncdeps --clean --cleanbuild --noconfirm
+            '
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: antigravity-ide-package
+          path: '*.pkg.tar.zst'
+          if-no-files-found: error
+
+      - name: Publish GitHub release
+        if: inputs.release_tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ inputs.release_tag }}" *.pkg.tar.zst --title "${{ inputs.release_tag }}" --generate-notes
