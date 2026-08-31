@@ -2,10 +2,11 @@
 Name=Antigravity IDE
 Comment=Agent-first desktop IDE from Google
 Exec=antigravity-ide %F
-Icon=antigravity-ide
+Icon=/usr/share/pixmaps/antigravity-ide.png
 Type=Application
 Categories=Development;IDE;
 MimeType=text/plain;inode/directory;
 StartupNotify=true
+StartupWMClass=antigravity-ide
 Terminal=false
 Keywords=code;coding;development;editor;ide;programming;

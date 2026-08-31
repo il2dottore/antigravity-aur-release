@@ -76,6 +76,8 @@ package() {
     "$pkgdir/usr/share/applications/antigravity-ide.desktop"
   install -Dm644 "$appdir/resources/app/resources/linux/code.png" \
     "$pkgdir/usr/share/icons/hicolor/1024x1024/apps/antigravity-ide.png"
+  install -Dm644 "$appdir/resources/app/resources/linux/code.png" \
+    "$pkgdir/usr/share/pixmaps/antigravity-ide.png"
   install -Dm644 "$appdir/resources/app/LICENSE.txt" \
     "$pkgdir/usr/share/licenses/antigravity-ide/LICENSE.txt"
 
